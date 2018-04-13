@@ -157,7 +157,7 @@ if __name__ == '__main__':
 
   print(device_list)
 
-  for item in range(20):
+  for item in range(1000):
 
     for i in dev_list:
       devices = i

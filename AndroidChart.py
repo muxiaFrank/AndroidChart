@@ -59,8 +59,8 @@ def get_men(pkg_name, dev):
             elif len(info.split()) and info.split()[0].decode() == "Dalvik" and info.split()[1].decode() == 'Heap':
                 men_list.append(int(list[Size_position].decode()))
     mem = men_list
-    print("----men----")
-    logging.info(mem)
+    print("----mem----")
+    print mem
     # writeInfo(men, PATH("../info/" + dev + "_men.pickle"))
     return mem
 
@@ -114,19 +114,34 @@ def get_flow(pid, type, dev):
 
 
 def get_cpu(dev, pid):
-    cmd = "adb -s " + dev + " shell top  -d 1 -n 1 | grep %s" % pid
+    cmd = "adb -s " + dev + " shell top -n 1"
 
-    print(cmd)
+    print cmd
 
     cpu_info = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.readlines()
 
-    print cpu_info
+    # print cpu_info
 
-    for i in cpu_info:
-        nowTime = datetime.datetime.now().strftime('%m-%d %H:%M:%S')
+    for cpu_l in cpu_info:
+        list = cpu_l.split()
+        if "CPU" in cpu_l:
+            for item in list:
+                if "CPU" in item:
+                    cpu_postion = list.index(item)
+                    # print cpu_postion
 
-        cpu = i.split()[2].decode()
+        elif pid in cpu_l:
+            cpu = list[cpu_postion]
+
+
+            # print cpu,type(cpu)
+
+    if "%" in cpu:
         cpu = int(cpu.split("%")[0])
+    else:
+        cpu = int(float(cpu))
+
+    nowTime = datetime.datetime.now().strftime('%m-%d %H:%M:%S')
 
     print "----cpu----{}".format(cpu)
 
@@ -149,6 +164,8 @@ if __name__ == '__main__':
 
     package_name = sys.argv[1]
 
+    # package_name = "com.ss.android.ugc.aweme"
+
     pid = get_pid(package_name, device_list[0])
 
     print(device_list)
@@ -156,13 +173,13 @@ if __name__ == '__main__':
     cpu_sum = Native_Heap_sum = Dalvik_Heap_sum = 0
 
     for item in range(1000):
+        print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+
         devices = dev_list[0]
 
         cpu_info = get_cpu(devices, pid)
 
         print cpu_info
-
-        print 111111111111111
 
         cpu_sum = cpu_sum + cpu_info[1]
 

@@ -126,7 +126,7 @@ def get_cpu(dev, pid):
         list = cpu_l.split()
         if "CPU" in cpu_l:
             for item in list:
-                if "CPU" in item:
+                if "CPU%" in item:
                     cpu_postion = list.index(item)
                     # print cpu_postion
 
